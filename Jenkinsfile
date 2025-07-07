@@ -41,11 +41,11 @@ pipeline {
             steps{
                 script{
                     docker.withRegistry("${registry}", registryCredentials){
-                        sh "docker build -t backend-nest-test-MLM ."
-                        sh "docker tag backend-nest-test-MLM ${dockerimagePrefix}/backend-nest-test-MLM"
-                        sh "docker tag backend-nest-test-MLM ${dockerimagePrefix}/backend-nest-test-MLM:${BUILD_NUMBER}"
-                        sh "docker push ${dockerimagePrefix}/backend-nest-test-MLM"
-                        sh "docker push ${dockerimagePrefix}/backend-nest-test-MLM:${BUILD_NUMBER}"
+                        sh "docker build -t backend-nest-test-mlm ."
+                        sh "docker tag backend-nest-test-mlm ${dockerimagePrefix}/backend-nest-test-mlm"
+                        sh "docker tag backend-nest-test-mlm ${dockerimagePrefix}/backend-nest-test-mlm:${BUILD_NUMBER}"
+                        sh "docker push ${dockerimagePrefix}/backend-nest-test-mlm"
+                        sh "docker push ${dockerimagePrefix}/backend-nest-test-mlm:${BUILD_NUMBER}"
                     }
                 }
 
@@ -60,7 +60,7 @@ pipeline {
             }
             steps {
                 withKubeConfig([credentialsId: 'gcp-kubeconfig']){
-                    sh 'kubectl -n lab-mlabbe set image deployments/backend-nest-test-MLM backend-nest-test-MLM=${dockerimagePrefix}/backend-nest-test-MLM:${BUILD_NUMBER}'
+                    sh 'kubectl -n lab-mlabbe set image deployments/backend-nest-test-mlm backend-nest-test-mlm=${dockerimagePrefix}/backend-nest-test-mlm:${BUILD_NUMBER}'
                 }
             }
         }
