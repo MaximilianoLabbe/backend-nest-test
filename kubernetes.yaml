@@ -1,0 +1,66 @@
+# (d) Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-mlabbe
+---
+# (a) Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-nest-test-mlm
+  namespace: lab-mlabbe
+  labels:
+    app: backend-nest-test-mlm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-nest-test-mlm
+  template:
+    metadata:
+      labels:
+        app: backend-nest-test-mlm
+    spec:
+      containers:
+      - name: backend-nest-test-mlm
+        image: us-west1-docker.pkg.dev/lab-agibiz/docker-repository/backend-nest-test-mlm
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred
+---
+# (b) Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-nest-svc
+  namespace: lab-mlabbe
+  labels:
+    app: backend-nest-svc
+spec:
+  selector:
+    app: backend-nest-test-mlm
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 4000
+---
+# (c) Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-backend-nest-test-mlm
+  namespace: lab-mlabbe
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: mlm.devops.cl
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend-nest-svc
+            port:
+              number: 80
